@@ -1,69 +1,41 @@
 public class Shape {
-
     protected PVector[] vertices;
     protected Triangle[] triangles;
-    PVector centroid;
-
+    protected PVector centroid;
+    protected float radius;
     protected float area;
 
     boolean debug;
 
-    public boolean colliding(Shape shape) {
-        return false;
-    }
-
-    public void show() {
-    }
-
-    public void randomize() {
-    }
-
-    public void randomize(PVector centroid, int len, float radius, float dr, float dTheta) {
-    }
-
-    public void randomize(PVector centroid, float radius, float dr, float dTheta) {
-    }
-
-    public void rotate(float dTheta) {
-    }
-
-    public void sortVertices() {
-    }
-
-    protected void calculateCentroid() {
-    }
-
-    protected void calculateTriangles() {
-    }
-
-    public float calculateArea () {
-        return 0f;
-    }
-
-    public float getArea() {
-        return this.area;
-    }
+    public boolean colliding(Shape shape) { return false; }
+    public void show() {}
+    public void randomize() {}
+    public void randomize(PVector centroid, int len, float radius, float dr, float dTheta) {}
+    public void randomize(PVector centroid, float radius, float dr, float dTheta) {}
+    public void rotate(float dTheta) {}
+    public void sortVertices() {}
+    public PVector[] getVertices() { return this.vertices; }
+    public Triangle[] getTriangles() { return this.triangles; }
+    protected void calculateCentroid() {}
+    protected void calculateTriangles() {}
+    public float calculateArea () { return 0f; }
+    public float getArea() { return this.area; }
+    
+    // return the max distance from it's vertices
+    public float getRadius() { return this.radius; }
+    public PVector getCenter() { return this.centroid; }
+    public void setCenter(PVector center) { this.centroid = center; }
 
     public void twitch(int i, PVector v) {
         if (i < 0 || i >= this.vertices.length) return;
         this.vertices[i].set(v.x, v.y);
         this.area = this.calculateArea();
-
-        //if (this instanceof Polygon) {
-        //    this.calculateTriangles();
-        //}
-
         fill(0);
         noStroke();
         circle(v.x, v.y, 5);
     }
-
-    public boolean testPoint(PVector point) {
-        return this.testPoint(point.x, point.y);
-    }
-    public boolean testPoint(float x, float y) {
-        return false;
-    }
+    public boolean testPoint(PVector point) { return this.testPoint(point.x, point.y); }
+    public boolean testPoint(float x, float y) { return false; }
 }
 
 //=============================================================================================================================================
@@ -108,6 +80,7 @@ public class Polygon extends Shape {
             this.vertices[i] = new PVector(r * cos(theta), r * sin(theta));
             this.vertices[i].add(this.centroid);
         }
+        this.calculateTriangles();
         this.area = this.calculateArea();
     }
 
@@ -124,20 +97,32 @@ public class Polygon extends Shape {
 
     @Override
         public void show() {
-        if (this.debug) {
-            if (this.triangles != null) {
-                stroke(0);
-                strokeWeight(1);
-                for (Triangle triangle : this.triangles) {
-                    triangle.show();
-                }
-            }
-        }
         beginShape();
         for (int i = 0; i < this.vertices.length; i++) {
             vertex(this.vertices[i].x, this.vertices[i].y);
         }
         endShape(CLOSE);
+        if (this.debug) {
+            if (this.triangles != null) {
+                push();
+                stroke(0);
+                strokeWeight(2);
+                noFill();
+                for (Triangle triangle : this.triangles) {
+                    if (triangle.pointWasIn) {
+                        push();
+                        fill(255, 25, 25, .8*255);
+                        triangle.show();
+                        triangle.pointWasIn = false;
+                        pop();
+                        continue;
+                    }
+                    triangle.show();
+                    
+                }
+                pop();
+            }
+        }
     }
 
     @Override
@@ -171,11 +156,52 @@ public class Polygon extends Shape {
         }
         return area;
     }
+    
+    @Override
+    public boolean testPoint(float x, float y) {
+        for (int i=0; i<this.triangles.length; i++) {
+            if (this.triangles[i].testPoint(x, y)) return true;
+        }
+        return false;
+    }
+    
+    @Override
+    public boolean colliding(Shape shape) {
+        if (shape instanceof Polygon) {
+            PVector points[] = shape.getVertices();
+            for (int i=0; i<vertices.length; i++) {
+                if (this.testPoint(points[i])) return true;
+            }
+            Triangle[] triangles = shape.getTriangles();
+            for (int i=0; i<this.vertices.length; i++) {
+                if (shape.testPoint(this.vertices[i])) return true;
+            }
+        }
+        if (shape instanceof Circle) {
+            for (int i=0; i<this.vertices.length; i++) {
+                if (shape.testPoint(this.vertices[i])) return true;
+            }
+        }
+        return false;
+    }
 }
+
+
+
+
+
+
 
 //=============================================================================================================================================
 
+
+
+
+
+
+
 public class Triangle extends Polygon {
+    public boolean pointWasIn;
     public Triangle() {
     }
 
@@ -224,9 +250,9 @@ public class Triangle extends Polygon {
     @Override
         public boolean testPoint(float x, float y) {
         PVector point = new PVector(x, y);
-        float ar1 = area(vertices[0], point, vertices[1]);
-        float ar2 = area(vertices[1], point, vertices[2]);
-        float ar3 = area(vertices[0], point, vertices[2]);
+        float ar1 = area(this.vertices[0], point, vertices[1]);
+        float ar2 = area(this.vertices[1], point, vertices[2]);
+        float ar3 = area(this.vertices[0], point, vertices[2]);
         float absSum = abs(ar1) + abs(ar2) + abs(ar3);
 
         int approxArea = floor(abs(this.area));
@@ -250,10 +276,11 @@ public class Triangle extends Polygon {
             line(x, y, vertices[1].x, vertices[1].y);
             line(x, y, vertices[2].x, vertices[2].y);
 
-            text(String.format("\n\n\n\n\narap = %d", approxArea), w, h);
-            text(String.format("\n\n\n\n\n\narap2= %d", approxSum), w, h);
+            text(String.format("\n\n\n\n\nappr = %d", approxArea), w, h);
+            text(String.format("\n\n\n\n\n\nappr2= %d", approxSum), w, h);
         }
-        return abs(approxArea - approxSum) <= EPSILON;
+        this.pointWasIn = abs(approxArea - approxSum) <= EPSILON;
+        return pointWasIn;
     }
 }
 
@@ -276,13 +303,42 @@ public float area(float x1, float y1, float x2, float y2, float x3, float y3)
 
 public class Circle extends Shape {
     public Circle(float x, float y, float radius) {
-        this.centroid = new PVector(x, y, radius);
+        this.centroid = new PVector(x, y);
+        this.radius = radius;
     }
 
 
     @Override
-        void show() {
-        float radius = centroid.z;
-        ellipse(this.centroid.x, this.centroid.y, radius * 2, radius * 2);
+    public void show() {
+        ellipse(this.centroid.x, this.centroid.y, this.radius * 2, this.radius * 2);
     }
+    
+    @Override
+    public boolean testPoint(float x, float y) {
+        return distSq(this.centroid.x, this.centroid.y, x, y) - this.radius * this.radius <= EPSILON;
+    }
+    
+    @Override
+    public boolean colliding(Shape shape) {
+        if (shape instanceof Circle) {
+            float rSquare = (this.radius + shape.radius) * (this.radius + shape.radius);
+            return distSq(shape.getCenter(), this.centroid) - rSquare <= EPSILON;  
+        }
+        if (shape instanceof Polygon) {
+            PVector points[] = shape.getVertices();
+            for (int i=0; i<points.length; i++) {
+                if (this.testPoint(vertices[i])) return true;
+            }
+        }
+        return false;
+    }
+}
+
+
+//==================================================================================================================================================
+float distSq(float x1, float y1, float x2, float y2) {
+    return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
+}
+float distSq(PVector A, PVector B) {
+    return distSq(A.x, A.y, B.x, B.y);
 }
