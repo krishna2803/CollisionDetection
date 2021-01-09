@@ -5,7 +5,7 @@ public class Shape {
     protected float radius;
     protected float area;
 
-    boolean debug;
+    public boolean debug;
 
     public boolean colliding(Shape shape) { return false; }
     public void show() {}
@@ -169,10 +169,9 @@ public class Polygon extends Shape {
     public boolean colliding(Shape shape) {
         if (shape instanceof Polygon) {
             PVector points[] = shape.getVertices();
-            for (int i=0; i<vertices.length; i++) {
+            for (int i=0; i<points.length; i++) {
                 if (this.testPoint(points[i])) return true;
             }
-            Triangle[] triangles = shape.getTriangles();
             for (int i=0; i<this.vertices.length; i++) {
                 if (shape.testPoint(this.vertices[i])) return true;
             }
