@@ -21,7 +21,7 @@ public class Shape {
     public float calculateArea () { return 0f; }
     public float getArea() { return this.area; }
     
-    // return the max distance from it's vertices
+    // TODO: return the max distance from it's vertices
     public float getRadius() { return this.radius; }
     public PVector getCenter() { return this.centroid; }
     public void setCenter(PVector center) { this.centroid = center; }
@@ -36,22 +36,6 @@ public class Shape {
     }
     public boolean testPoint(PVector point) { return this.testPoint(point.x, point.y); }
     public boolean testPoint(float x, float y) { return false; }
-}
-
-//=============================================================================================================================================
-
-public class Line {
-    PVector A;
-    PVector B;
-
-    public Line(float x1, float y1, float x2, float y2) {
-        this.A = new PVector(x1, y1);
-        this.B = new PVector(x2, y2);
-    }
-
-    public void show() {
-        line(this.A.x, this.A.y, this.B.x, this.B.y);
-    }
 }
 
 //=============================================================================================================================================
@@ -185,19 +169,7 @@ public class Polygon extends Shape {
     }
 }
 
-
-
-
-
-
-
 //=============================================================================================================================================
-
-
-
-
-
-
 
 public class Triangle extends Polygon {
     public boolean pointWasIn;
@@ -233,17 +205,9 @@ public class Triangle extends Polygon {
 
     @Override
         public float calculateArea () {
-        // 20019.418
         return (this.vertices[0].x * (this.vertices[1].y - this.vertices[2].y)  +
             this.vertices[1].x * (this.vertices[2].y - this.vertices[0].y)  +
             this.vertices[2].x * (this.vertices[0].y - this.vertices[1].y)) / 2f;
-        /*
-        | x1       y1       1 |
-         | x2 - x3  y2 - y3  0 |
-         | x3 - x1  y3 - y1  0 |
-         det = (x2 - x3) * (y3 - y1) - (x3 - x1) * (y2 - y3);
-         */
-        //return area(this.vertices[0], this.vertices[1], this.vertices[2]);
     }
 
     @Override
@@ -286,19 +250,13 @@ public class Triangle extends Polygon {
 public float area(PVector A, PVector B, PVector C) {
     return area(A.x, A.y, B.x, B.y, C.x, C.y);
 }
-//public float area(float x1, float y1, float x2, float y2, float x3, float y3) {
-//    return (x1 * (y2 - y3)  +
-//            x2 * (y3 - y1)  +
-//            x3 * (y1 - y2)) / 2f;
-//}
-
-public float area(float x1, float y1, float x2, float y2, float x3, float y3) 
-{ 
-    return (x1*(y2-y3) + x2*(y3-y1)+ x3*(y1-y2)) / 2.0f;
-} 
+public float area(float x1, float y1, float x2, float y2, float x3, float y3) {
+    return (x1 * (y2 - y3)  +
+            x2 * (y3 - y1)  +
+            x3 * (y1 - y2)) / 2f;
+}
 
 //=============================================================================================================================================
-
 
 public class Circle extends Shape {
     public Circle(float x, float y, float radius) {
@@ -333,8 +291,8 @@ public class Circle extends Shape {
     }
 }
 
-
 //==================================================================================================================================================
+
 float distSq(float x1, float y1, float x2, float y2) {
     return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
 }
