@@ -1,5 +1,5 @@
 # CollisionDetection
-Convex Polygon to Convex Polygon detection (in (processing)[https://processing.org/], a java library) using cartesian coordinates and basic co-ordinate geometry.
+Convex Polygon to Convex Polygon detection (in [processing](https://processing.org/), a java library) using cartesian coordinates and basic co-ordinate geometry.
 
 ### Algorithm:
 1. Divide `n-vertices polygon` into `n-2 triangles`. *(n >= 3)*
