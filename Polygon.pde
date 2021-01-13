@@ -66,12 +66,12 @@ public class Polygon extends Shape {
     }
 
     @Override
-        public void randomize() {
+    public void randomize() {
         this.randomize(new PVector(width/2, height/2), floor(random(5, 10)), random(height/4, height/3), height/16, random(PI/4));
     }
 
     @Override
-        public void randomize(PVector centroid, int len, float radius, float dr, float dTheta) {
+    public void randomize(PVector centroid, int len, float radius, float dr, float dTheta) {
         this.vertices = new PVector[len];
         this.centroid = centroid;
         for (int i=0; i<len; i++) {
@@ -85,7 +85,7 @@ public class Polygon extends Shape {
     }
 
     @Override
-        public void rotate(float dTheta) {
+    public void rotate(float dTheta) {
         for (int i=0; i<vertices.length; i++) {
             this.vertices[i].sub(this.centroid);
             float mag = this.vertices[i].mag();
@@ -96,7 +96,7 @@ public class Polygon extends Shape {
     }
 
     @Override
-        public void show() {
+    public void show() {
         beginShape();
         for (int i = 0; i < this.vertices.length; i++) {
             vertex(this.vertices[i].x, this.vertices[i].y);
@@ -126,7 +126,7 @@ public class Polygon extends Shape {
     }
 
     @Override
-        protected void calculateCentroid() {
+    protected void calculateCentroid() {
         float x = 0f, y = 0f;
         for (int i=0; i<this.vertices.length; i++) {
             x = vertices[i].x;
@@ -138,7 +138,7 @@ public class Polygon extends Shape {
     }
 
     @Override
-        protected void calculateTriangles () {
+    protected void calculateTriangles () {
         this.triangles = new Triangle[this.vertices.length - 2];
         for (int i=0; i < this.vertices.length - 2; i++) {
             triangles[i] = new Triangle(this.vertices[0], this.vertices[i+1], this.vertices[i+2]);
@@ -146,7 +146,7 @@ public class Polygon extends Shape {
     }
 
     @Override
-        public float calculateArea() {
+    public float calculateArea() {
         if (this.triangles == null) {
             this.calculateTriangles();
         }

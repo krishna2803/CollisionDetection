@@ -9,10 +9,10 @@ void setup() {
     mouse = new PVector(width/2, height/2);
 
     polygon1 = new Polygon();
-    polygon1.randomize(new PVector(width/2, height/2), 5, height/4f, height/8f, PI/12f);
+    polygon1.randomize(new PVector(width/2, height/2), 10, height/4f, height/16f, PI/12f);
     
     polygon2 = new Polygon();
-    polygon2.randomize(new PVector(width/2, height/2), 5, height/4f, height/8f, PI/12f);
+    polygon2.randomize(new PVector(width/2, height/2), 7, height/4f, height/12f, PI/12f);
     polygon2.setCenter(mouse);
     
 }
