@@ -7,9 +7,9 @@ Convex Polygon to Convex Polygon detection (in processing, a java library) using
 3. For each vertex of `polygon B`, check if any of its vertex lie inside/on any of triangles of `polygon A`.
 
 ### Point inside triangle:
-1. Given triangle ABC, point P.
-2. Calculate ar(ABC)
-3. Check if ar(PAB) + ar(PBC) + ar(PAC) = ar(ABC)
+1. Given `triangle ABC`, point P.
+2. Calculate `ar(ABC)`.
+3. Check if `ar(PAB) + ar(PBC) + ar(PAC) = ar(ABC)`.
 
 #### Footnotes
-coded by - @krishna2803
+coded by - **@krishna2803**
